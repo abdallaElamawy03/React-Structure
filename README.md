@@ -1,0 +1,1 @@
+This is a React-Structure just implement your backend and get started with your own design , this is the login and signup scenarios including the authentication and authorization functions for every user role in the app.js 
