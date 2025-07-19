@@ -1,3 +1,4 @@
+import React from 'react'
 import { useRef, useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -5,10 +6,10 @@ import useInput from '../hooks/useInput';
 
 import axios from '../api/axios';
 
-const LOGIN_URL = '/auth';
+const LOGIN_URL = '/auth/clogin';
 
-const Login = () => {
-    const { setAuth, persist, setPersist } = useAuth();
+const Logincompany = () => {
+ const { setAuth, persist, setPersist } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/home";
@@ -16,23 +17,23 @@ const Login = () => {
     const userRef = useRef();
  
 
-    const [user, resetUser , userAttribs] = useInput('user', '');
+    const [company, resetc_Name , c_Nameatt] = useInput('company', '');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
-    const [username, setUsername] = useState(''); // State to hold the username
+    const [c_Name, setCompanyname] = useState(''); // State to hold the username
 
-    
+
 
     useEffect(() => {
         setErrMsg('');
-    }, [user, pwd]);
+    }, [c_Name, pwd]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const response = await axios.post(LOGIN_URL,
-                JSON.stringify({ username: user, password: pwd }),
+                JSON.stringify({ c_Name: c_Name, password: pwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -41,14 +42,15 @@ const Login = () => {
 
             console.log(response.data);
             const accessToken = response?.data?.accessToken;
-            const roles = response?.data?.roles;
+           const roles = response?.data.roles
             const company =response?.data.company
+            
 
             // Set authentication state
-            setAuth({ user, roles, accessToken,company });
-            setUsername(user); // Set the username in state
-            console.log("Username set:", user);
-            resetUser ();
+            setAuth({ c_Name, accessToken ,roles});
+            setCompanyname(c_Name); // Set the username in state
+            console.log("company set:",c_Name);
+            resetc_Name ();
             setPwd('');
             navigate(from, { replace: true });
 
@@ -79,7 +81,7 @@ const Login = () => {
     <header>
       <nav class="bg-white shadow-sm py-4 px-6">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-          <div class="text-xl font-bold text-indigo-600">HR</div>
+          <div class="text-xl font-bold text-indigo-600">CEO</div>
 
           <Link to={'/'}
             class="flex items-center text-gray-600 hover:text-indigo-600"
@@ -96,7 +98,7 @@ const Login = () => {
         <div class="bg-white shadow-md rounded-lg px-8 pt-8 pb-8 mb-4">
             <h4 className=' text-red-600 font-bold mb-2 rounded flex justify-start w-fit'>{errMsg}</h4>
           <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
-            Sign In
+            Sign In company
           </h2>
           <form onSubmit={handleSubmit}>
 
@@ -104,16 +106,16 @@ const Login = () => {
           <div class="mb-4">
             <label
               class="block text-gray-700 text-sm font-bold mb-2"
-              for="username"
+              for="company"
             >
-              Username
+              Company Name
             </label>
             <input
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
               
               type="text"
-              id="username" ref={userRef} autoComplete='off' {...userAttribs}
-              placeholder="Enter your username"
+              onChange={(e) => setCompanyname(e.target.value)} value={c_Name}
+              placeholder="Enter company name"
             />
           </div>
 
@@ -189,4 +191,5 @@ const Login = () => {
     );
 };
 
-export default Login;
+
+export default Logincompany

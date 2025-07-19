@@ -5,16 +5,16 @@ import axios from '../api/axios';
 import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
 
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const Company_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/users';
+const REGISTER_URL = '/company';
 
 const Register = () => {
     const userRef = useRef();
     const errRef = useRef();
     const navigate = useNavigate()
-
-    const [user, setUser] = useState('');
+    const[email,set_email]=useState('')
+    const [c_Name, set_Cname] = useState('');
     const [validName, setValidName] = useState(false);
     const [userFocus, setUserFocus] = useState(false);
 
@@ -29,13 +29,13 @@ const Register = () => {
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
-    useEffect(() => {
-        userRef.current.focus();
-    }, [])
+    // useEffect(() => {
+    //     userRef.current.focus();
+    // }, [])
 
     useEffect(() => {
-        setValidName(USER_REGEX.test(user));
-    }, [user])
+        setValidName(Company_REGEX.test(c_Name));
+    }, [c_Name])
 
     useEffect(() => {
         setValidPwd(PWD_REGEX.test(pwd));
@@ -44,34 +44,35 @@ const Register = () => {
 
     useEffect(() => {
         setErrMsg('');
-    }, [user, pwd, matchPwd])
+    }, [c_Name, pwd, matchPwd])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         // if button enabled with JS hack
-        const v1 = USER_REGEX.test(user);
+        const v1 = Company_REGEX.test(c_Name);
         const v2 = PWD_REGEX.test(pwd);
-        if (!v1 || !v2) {
-            setErrMsg("Invalid Entry");
-            return;
-        }
+        // if (!v1 || !v2) {
+        //     setErrMsg("Enter more powerful password");
+        //     return;
+        // }
         try {
+            // c_Name,password,email
             const response = await axios.post(REGISTER_URL,
-                JSON.stringify({ username:user, password:pwd,roles:["Free"] }),
+                JSON.stringify({ c_Name:c_Name,email:email, password:pwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
                 
             );
-            navigate('/')
+            navigate('/home')
 
             // TODO: remove console.logs before deployment
             console.log(JSON.stringify(response?.data));
             //console.log(JSON.stringify(response))
             setSuccess(true);
             //clear state and controlled inputs
-            setUser('');
+            set_Cname('');
             setPwd('');
             setMatchPwd('');
         } catch (err) {
@@ -82,80 +83,171 @@ const Register = () => {
             } else {
                 setErrMsg('Registration Failed')
             }
-            errRef.current.focus();
+            // errRef.current.focus();
         }
     }
 
     return (
         <>
-         <Header /> {/* Pass the username as a prop */}
-            <main className="flex-shrink-0 w-40">
-                <div className="container py-1">
-                    <h1 className="mt-5">Sign up</h1>
-                    <p ref={errRef} className={errMsg ? 'errmsg':'offscreen'} aria-live="assertive">{errMsg}</p>
-                    <form onSubmit={handleSubmit}>
-                      
-                        <div className="mb-3" style={{ width: "40%" }}>
-                            <label htmlFor="exampleInputuser" className="form-label">Username</label>
-                            <input type="text" className="form-control" id="username" ref={userRef} autoComplete='off'  required 
-                            value={user}
-                            onChange={(e)=>setUser(e.target.value)}
+        <body class="bg-gray-50 min-h-screen flex flex-col">
+    <nav class="bg-white shadow-sm py-4 px-6">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="text-xl font-bold text-indigo-600">CEO</div>
+
+        <Link to={'/'}
+            class="flex items-center text-gray-600 hover:text-indigo-600"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>
+            <div>Home</div>
+          </Link>
+      </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+      <div class="w-full max-w-md">
+        <div class="bg-white shadow-md rounded-lg px-8 pt-8 pb-8 mb-4">
+          <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
+            Create Company
+          </h2>
+            <h4 className=' text-red-600 font-bold mb-2 rounded flex justify-start w-fit'>{errMsg}</h4>
+        <form onSubmit={handleSubmit}>
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="user"
+            >
+              Company Name
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+              id="company"
+              type="text"
+              placeholder="Your Company Name"
+               value={c_Name}
+                            onChange={(e)=>set_Cname(e.target.value)}
                             aria-invalid={validName ? 'false':'true'}
                             onFocus={()=>setUserFocus(true)}
                             onBlur={()=>setUserFocus(false)}
 
-                            aria-describedby="emailHelp" />
-                            
-                        </div>
-                        <div className="mb-3" style={{ width: "40%" }}>
-                            <label htmlFor="exampleInputuser" className="form-label">Password</label>
-                            <input type="password" className="form-control" id="password" ref={userRef} autoComplete='off'  required 
+
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="email"
+            >
+              Email
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+              id="email"
+              type="email"
+              placeholder="Your email address"
+              value={email}
+              onChange={(e)=>set_email(e.target.value)}
+            />
+          </div>
+
+          <div class="mb-4 relative">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="password"
+            >
+              Password
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+              id="password"
+              type="password"
+              placeholder="Create a password"
+             ref={userRef} autoComplete='off'  required 
                             value={pwd}
                             onChange={(e)=>setPwd(e.target.value)}
                             aria-invalid={validPwd ? 'false':'true'}
                             onFocus={()=>setPwdFocus(true)}
                             onBlur={()=>setPwdFocus(false)}
 
-                            aria-describedby="emailHelp" />
+                            aria-describedby="emailHelp"
+            />
+             <span class="password-icon">
+            </span>
+          </div>
 
-                        </div>
-                        <div className="mb-3" style={{ width: "40%" }}>
-                        <label htmlFor="confirm_pwd" className="form-label">
-                            Confirm Password:
-                          
-                        </label>
-                        <input
-                            type="password"
-                            id="confirm_pwd"
-                            className="form-control"
-                            onChange={(e) => setMatchPwd(e.target.value)}
+          <div class="mb-6 relative">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="confirm-password"
+            >
+                Confirm Password
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-indigo-500"
+              id="confirm_pwd"
+              type="password"
+              placeholder="Confirm your password"
+              onChange={(e) => setMatchPwd(e.target.value)}
                             value={matchPwd}
                             required
                             aria-invalid={validMatch ? "false" : "true"}
                             aria-describedby="confirmnote"
                             onFocus={() => setMatchFocus(true)}
                             onBlur={() => setMatchFocus(false)}
-                        />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            Must match the first password input field.
-                        </p>
 
-                        </div>
-                        <button className="btn btn-primary btn" disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
-                    </form>
-                    <br/>
-                    <hr/>
-                    <span>Already registered ?</span>
-                    <br/>
-                    <Link className="btn btn-secondary btn-sm" to={'/login'}>Login</Link>
+            />
+             <span class="password-icon">
+              
+            </span>
+          </div>
 
-                    
-                    
+          <div class="flex items-center mb-6">
+            <input
+              id="terms"
+              type="checkbox"
+              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            />
+            <label for="terms" class="ml-2 block text-sm text-gray-700">
+              I agree to the
+              <a href="#" class="text-indigo-600 hover:text-indigo-800"
+                >Terms and Conditions</a
+              >
+            </label>
+          </div>
 
-                    </div>
-                    </main>
+          <div class="mb-6">
+            <a href="dashboard.html">
+              <button
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150"
+                type="submit"
+              >
+                Sign Up
+              </button>
+            </a>
+          </div>
+          </form>
 
+          <div class="text-center">
+            <p class="text-sm text-gray-600">
+              Already have an account?
+              <Link
+                to={'/login'}
+                class="text-indigo-600 hover:text-indigo-800 font-medium"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-white py-4 px-6 shadow-inner">
+      <div class="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+        &copy; 2025
+      </div>
+    </footer>
+  </body>
         
           
         </>

@@ -6,7 +6,7 @@ import useToggle from "./useToggle";
 
 const useLogout = () => {
     const { setAuth } = useAuth();
-    
+
     
 
 
@@ -16,7 +16,8 @@ const useLogout = () => {
             const response = await axios.post('auth/logout', {
                 withCredentials: true
             });
-            
+
+            localStorage.setItem('persist',false)
             
             
             

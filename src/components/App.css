@@ -1,0 +1,36 @@
+.this{
+    background-color: #00224B;
+}
+* {
+scroll-behavior: smooth;
+}
+.secondary {
+color: "#10B981";
+}
+
+.dark {
+color: #1f2937;
+}
+
+.light {
+color: #f9fafb;
+}
+.bg_Color {
+background-color: #00224b;
+transition: 0.3s ease;
+color: #00224b;
+}
+.bg_Color a :hover {
+color: red;
+}
+.main_Color {
+color: #00224b;
+}
+.text-decor{
+text-decoration: none;
+}
+.bg_white {
+background-color: #ffffff;
+transition: 0.3s ease;
+color: black;
+}

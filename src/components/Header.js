@@ -1,79 +1,182 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import AuthContext from '../context/AuthProvider';
 import useLogout from '../hooks/useLogout';
-import useToggle from '../hooks/useToggle';
+
+import './App.css'
 const Header = () => {
-    const { auth } = useAuth(AuthContext);
-    // const [name, setName] = useState('');
-    const[admin , setAdmin] = useState(()=>{
-        return localStorage.getItem('role')||''
-    })
-    const [name, setName] = useState(() => {
-        // Initialize state from local storage if available
-        return localStorage.getItem('name') || '';
-    });
-    const[presist,setpresist] = useToggle('persist',true)  
+    const { auth } = useAuth();
+    
     const logout = useLogout()
     const signOut = () =>{
-        localStorage.setItem('persist', !presist);
-        localStorage.removeItem('role')
-        localStorage.removeItem('name')
+        
         
         logout()
     }
-    useEffect(() => {
-        // Set the name based on the auth context only once
-        if (auth.user) {
-            
-           
-            localStorage.setItem('name', auth.user); 
-            localStorage.setItem('role', auth.roles); 
-        }
-    }, [auth.user]); 
 
     // Check if the user has the Admin role
 
     return (
-        <div className="container">
-            <header className="d-flex justify-content-center py-3">
-                <ul className="nav nav-pills">
+    
                 <>
-                {admin == 'Admin' ? (
-                    <>
-
-
-                            <li className="nav-item">
-                                <Link to={'/'} className="nav-link">{name ? `${name}` : "login"}</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to={'/'} className="nav-link">Home</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to={'/Admin'} className="nav-link">Admin</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to={'/login'} onClick={signOut}  className="nav-link">logout</Link>
-                            </li>
-                    </>
-                ):(
-                    <>
-                    <li className='nav-link'>hi</li>
-                    <li className="nav-item">
-                                <Link to={'/'} className="nav-link">Home</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to={'/login'} onClick={signOut} onChange={presist} className="nav-link">logout</Link>
-                            </li>
-                    
-                    </>
-                )}
-                
-                        </>
-                </ul>
-            </header>
+              
+   <div class="bg-gray-50 min-h-screen flex">
+     {auth.roles == 'manager' || auth.roles == 'hr' ||auth.roles=='company' ? (
+       <>
+      <div
+        class="sidebar bg-[#00224b] w-64 min-h-screen border-r border-gray-200 fixed hidden md:block"
+      >
+        <div class="p-4 flex items-center justify-center h-16">
+          <p class="fas fa-users text-white text-2xl"></p>
+          <span class="ml-2 text-xl font-semibold text-white">CEO </span>
         </div>
+           <nav class="mt-6 px-4">
+          <div class="space-y-1">
+            <Link to={'/home'}
+              href="/dashboard-admin.html"
+              class=" text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-tachometer-alt mr-3"></i>
+              Dashboard
+            </Link>
+            <Link to={"/all/employees"}
+              href="employees.html"
+              class="text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-user-tie mr-3"></i>
+              Employees
+            </Link>
+            <Link to={"/all/attendance"}
+              href="attendance.html"
+              class="text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-calendar-alt mr-3"></i>
+              Attendance
+            </Link>
+            <Link to={"/all/companytasks"}
+              href="company-tasks.html"
+              class="text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fa-solid fa-list-check mr-3"></i>
+              Company Tasks
+            </Link>
+             <Link to={"/user/attend"}
+              href="attendance.html"
+              class="text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-calendar-alt mr-3"></i>
+               my Attendance
+            </Link>
+            <Link to={"/user/tasks"}
+              href="attendance.html"
+              class="text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-calendar-alt mr-3"></i>
+               my tasks
+            </Link>
+          </div>
+
+          <div class="mt-8 pt-4 border-t border-gray-200">
+            <h3
+              class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+            >
+              Settings
+            </h3>
+
+            <div class="mt-2 space-y-1">
+              <Link to={'/user/profile'}
+                href="admin-my-profile.html"
+                class="text-white hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+              >
+                <i class="fa-solid fa-circle-user mr-3"></i>
+                Profile
+              </Link>
+
+              <button onClick={signOut}
+                class="text-white block hover:bg-gray-800 group flex items-center px-4 py-3 rounded-lg"
+              >
+                <i class="fas fa-right-from-bracket mr-3"></i>
+                Logout
+              </button>
+            </div>
+          </div>
+        </nav>
+        </div>
+          </>
+        ):(
+          <>
+          <div
+        class="sidebar bg-white w-64 min-h-screen border-r border-gray-200 fixed hidden md:block"
+      >
+        <div class="p-4 flex items-center justify-center h-16">
+          <p class="fas fa-users text-[#00224b] text-2xl"></p>
+          <span class="ml-2 text-xl font-semibold text-[#00224b]">HR </span>
+        </div>
+           <nav class="mt-6 px-4">
+          <div class="space-y-1">
+            <Link to={'/home'}
+              href="/dashboard-admin.html"
+              class=" text-gray-600  hover:bg-gray-100 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-tachometer-alt mr-3"></i>
+              Dashboard
+            </Link>
+       
+           <Link to={"/user/attend"}
+              href="attendance.html"
+              class="text-gray-600 hover:bg-gray-100 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-calendar-alt mr-3"></i>
+               my Attendance
+            </Link>
+            <Link to={"/user/tasks"}
+              href="attendance.html"
+              class="text-gray-600 hover:bg-gray-100 group flex items-center px-4 py-3 rounded-lg"
+            >
+              <i class="fas fa-calendar-alt mr-3"></i>
+               my tasks
+            </Link>
+          </div>
+
+          <div class="mt-8 pt-4 border-t border-gray-200">
+            <h3
+              class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+            >
+              Settings
+            </h3>
+
+            <div class="mt-2 space-y-1">
+              <Link to={'/user/profile'}
+                href="admin-my-profile.html"
+                class="text-gray-600 hover:bg-gray-100 group flex items-center px-4 py-3 rounded-lg"
+              >
+                <i class="fa-solid fa-circle-user mr-3"></i>
+                Profile
+              </Link>
+
+              <button onClick={signOut}
+                class="text-red-500 block hover:bg-gray-100 group flex items-center px-4 py-3 rounded-lg"
+              >
+                <i class="fas fa-right-from-bracket mr-3"></i>
+                Logout
+              </button>
+            </div>
+          </div>
+        </nav>
+        </div>
+        
+          
+          </>
+        )}
+
+       
+      </div>
+  
+
+
+     
+    </>
+              
     );
 };
 
